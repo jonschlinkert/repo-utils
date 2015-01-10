@@ -1,0 +1,48 @@
+{
+  "name": "repo-utils",
+  "description": "Utils for normalizing and formatting repo data.",
+  "version": "0.1.0",
+  "homepage": "https://github.com/jonschlinkert/repo-utils",
+  "author": {
+    "name": "Jon Schlinkert",
+    "url": "https://github.com/jonschlinkert"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git://github.com/jonschlinkert/repo-utils.git"
+  },
+  "bugs": {
+    "url": "https://github.com/jonschlinkert/repo-utils/issues"
+  },
+  "license": {
+    "type": "MIT",
+    "url": "https://github.com/jonschlinkert/repo-utils/blob/master/LICENSE-MIT"
+  },
+  "main": "index.js",
+  "engines": {
+    "node": ">=0.10.0"
+  },
+  "scripts": {
+    "test": "mocha -R spec"
+  },
+  "dependencies": {
+    "export-files": "^0.1.4",
+    "extend-shallow": "^0.2.0",
+    "kind-of": "^0.1.2"
+  },
+  "devDependencies": {
+    "mocha": "*",
+    "should": "*"
+  },
+  "keywords": [
+    "git",
+    "github",
+    "repo",
+    "repo-utils",
+    "repository",
+    "url",
+    "utilities",
+    "utility",
+    "utils"
+  ]
+}
