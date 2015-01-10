@@ -16,7 +16,7 @@ var repo = require('repo-utils');
 
 ## API
 
-### [.git](lib/git.js#L23)
+### [.git](lib/git.js#L25)
 
 Create a github `.git` url.
 
@@ -27,7 +27,9 @@ Create a github `.git` url.
 repo.git('abc/xyz');
 //=> 'https://github.com/abc/xyz.git'
 
-repo.git({pathname: 'abc/xyz'});
+var url = require('url');
+var parts = url.parse('abc/xyz');
+repo.git(parts);
 //=> 'https://github.com/abc/xyz.git'
 ```
 
