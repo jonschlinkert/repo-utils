@@ -1,7 +1,6 @@
 'use strict';
 
 var gulp = require('gulp');
-var keys = require('glob-keys');
 var mocha = require('gulp-mocha');
 var unused = require('gulp-unused');
 var istanbul = require('gulp-istanbul');
@@ -32,8 +31,8 @@ gulp.task('lint', function() {
 });
 
 gulp.task('unused', function() {
-  return gulp.src(['index.js', 'lib/utils.js'])
-    .pipe(unused({keys: keys('lib/utils.js')}));
+  return gulp.src(['index.js', 'utils.js'])
+    .pipe(unused({keys: Object.keys(require('./utils.js'))}));
 });
 
 gulp.task('default', ['test', 'lint']);
