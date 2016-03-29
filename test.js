@@ -7,6 +7,7 @@
 
 'use strict';
 
+require('mocha');
 var url = require('url');
 var assert = require('assert');
 var repo = require('./');
@@ -106,7 +107,7 @@ describe('.repository', function() {
 
 describe('.parse', function() {
   it('should parse a git remote url', function() {
-    var urls = repo.parse('https://github.com/abc/xyz.git');
+    var urls = repo.parseUrl('https://github.com/abc/xyz.git');
     assert.equal(urls.owner, 'abc');
     assert.equal(urls.name, 'xyz');
     assert.equal(urls.repo, 'abc/xyz');
@@ -118,7 +119,7 @@ describe('.parse', function() {
   });
 
   it('should parse a github url', function() {
-    var urls = repo.parse('https://github.com/abc/xyz');
+    var urls = repo.parseUrl('https://github.com/abc/xyz');
     assert.equal(urls.owner, 'abc');
     assert.equal(urls.name, 'xyz');
     assert.equal(urls.repo, 'abc/xyz');
@@ -130,7 +131,7 @@ describe('.parse', function() {
   });
 
   it('should parse a non-github url', function() {
-    var urls = repo.parse('https://foo.com/abc/xyz');
+    var urls = repo.parseUrl('https://foo.com/abc/xyz');
     assert.equal(urls.owner, 'abc');
     assert.equal(urls.name, 'xyz');
     assert.equal(urls.repo, 'abc/xyz');
@@ -142,7 +143,7 @@ describe('.parse', function() {
   });
 
   it('should parse a github content url', function() {
-    var urls = repo.parse('https://raw.githubusercontent.com/foo/bar/master/README.md');
+    var urls = repo.parseUrl('https://raw.githubusercontent.com/foo/bar/master/README.md');
     assert.equal(urls.owner, 'foo');
     assert.equal(urls.name, 'bar');
     assert.equal(urls.repo, 'foo/bar');
@@ -154,7 +155,7 @@ describe('.parse', function() {
   });
 
   it('should parse a github url from a repository path', function() {
-    var urls = repo.parse('abc/xyz');
+    var urls = repo.parseUrl('abc/xyz');
     assert.equal(urls.owner, 'abc');
     assert.equal(urls.name, 'xyz');
     assert.equal(urls.repo, 'abc/xyz');
@@ -167,7 +168,7 @@ describe('.parse', function() {
 
   it('should throw an error when owner is not passed', function(cb) {
     try {
-      repo.parse();
+      repo.parseUrl();
       cb(new Error('expected an error'));
     } catch (err) {
       assert.equal(err.message, 'expected repository URL to be a string');
@@ -178,7 +179,7 @@ describe('.parse', function() {
 
 describe('.expand', function() {
   it('should expand a github url', function() {
-    var urls = repo.expand('https://github.com/abc/xyz');
+    var urls = repo.expandUrl('https://github.com/abc/xyz');
     assert.equal(urls.host_api, 'api.github.com');
     assert.equal(urls.host_raw, 'https://raw.githubusercontent.com');
     assert.equal(urls.api, 'https://api.github.com/repos/abc/xyz');
@@ -190,7 +191,7 @@ describe('.expand', function() {
   });
 
   it('should expand a non-github url', function() {
-    var urls = repo.expand('https://foo.com/abc/xyz');
+    var urls = repo.expandUrl('https://foo.com/abc/xyz');
     assert.equal(urls.host_api, 'foo.com/api/v3');
     assert.equal(urls.host_raw, 'https://raw.githubusercontent.com');
     assert.equal(urls.api, 'https://foo.com/api/v3/repos/abc/xyz');
@@ -202,7 +203,7 @@ describe('.expand', function() {
   });
 
   it('should expand a git remote url', function() {
-    var urls = repo.expand('https://github.com/abc/xyz.git');
+    var urls = repo.expandUrl('https://github.com/abc/xyz.git');
     assert.equal(urls.host_api, 'api.github.com');
     assert.equal(urls.host_raw, 'https://raw.githubusercontent.com');
     assert.equal(urls.api, 'https://api.github.com/repos/abc/xyz');
@@ -214,7 +215,7 @@ describe('.expand', function() {
   });
 
   it('should expand a repository file path', function() {
-    var urls = repo.expand('https://github.com/abc/xyz.git', 'README.md');
+    var urls = repo.expandUrl('https://github.com/abc/xyz.git', 'README.md');
     assert.equal(urls.file, 'https://github.com/abc/xyz/blob/master/README.md');
     assert.equal(urls.raw, 'https://raw.githubusercontent.com/abc/xyz/master/README.md');
     assert.equal(urls.host_api, 'api.github.com');
@@ -228,7 +229,7 @@ describe('.expand', function() {
   });
 
   it('should expand a github url with branch', function() {
-    var urls = repo.expand('https://github.com/abc/xyz/tree/0.5.0');
+    var urls = repo.expandUrl('https://github.com/abc/xyz/tree/0.5.0');
     assert.equal(urls.host_api, 'api.github.com');
     assert.equal(urls.host_raw, 'https://raw.githubusercontent.com');
     assert.equal(urls.api, 'https://api.github.com/repos/abc/xyz');
@@ -240,7 +241,7 @@ describe('.expand', function() {
   });
 
   it('should expand repository path', function() {
-    var urls = repo.expand('abc/xyz');
+    var urls = repo.expandUrl('abc/xyz');
     assert.equal(urls.host_api, 'api.github.com');
     assert.equal(urls.host_raw, 'https://raw.githubusercontent.com');
     assert.equal(urls.api, 'https://api.github.com/repos/abc/xyz');
@@ -252,7 +253,7 @@ describe('.expand', function() {
   });
 
   it('should expand repository path with branch', function() {
-    var urls = repo.expand('abc/xyz#dev');
+    var urls = repo.expandUrl('abc/xyz#dev');
     assert.equal(urls.host_api, 'api.github.com');
     assert.equal(urls.host_raw, 'https://raw.githubusercontent.com');
     assert.equal(urls.api, 'https://api.github.com/repos/abc/xyz');
@@ -264,7 +265,7 @@ describe('.expand', function() {
   });
 
   it('should expand a git+https url', function() {
-    var urls = repo.expand('git+https://github.com/abc/xyz.git');
+    var urls = repo.expandUrl('git+https://github.com/abc/xyz.git');
     assert.equal(urls.host_api, 'api.github.com');
     assert.equal(urls.host_raw, 'https://raw.githubusercontent.com');
     assert.equal(urls.api, 'https://api.github.com/repos/abc/xyz');
@@ -276,7 +277,7 @@ describe('.expand', function() {
   });
 
   it('should expand a git:// url', function() {
-    var urls = repo.expand('git://github.com/abc/xyz.git');
+    var urls = repo.expandUrl('git://github.com/abc/xyz.git');
     assert.equal(urls.host_api, 'api.github.com');
     assert.equal(urls.host_raw, 'https://raw.githubusercontent.com');
     assert.equal(urls.api, 'https://api.github.com/repos/abc/xyz');
@@ -288,7 +289,7 @@ describe('.expand', function() {
   });
 
   it('should support branches', function() {
-    var urls = repo.expand('git://github.com/abc/xyz.git');
+    var urls = repo.expandUrl('git://github.com/abc/xyz.git');
     assert.equal(urls.host_api, 'api.github.com');
     assert.equal(urls.host_raw, 'https://raw.githubusercontent.com');
     assert.equal(urls.api, 'https://api.github.com/repos/abc/xyz');

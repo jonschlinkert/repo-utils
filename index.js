@@ -2,7 +2,14 @@
 
 var url = require('url');
 var util = require('util');
-var utils = require('./lib/utils');
+var utils = require('./utils');
+var gitConfigCache;
+
+/**
+ * Expose `repoUtils`
+ * @type {Object}
+ */
+
 var repo = exports = module.exports;
 
 /**
@@ -74,7 +81,7 @@ repo.repository = function(owner, name) {
     if (!utils.isString(owner)) {
       var str = obj.repository || obj.repo || obj.pathname;
       if (utils.isString(str)) {
-        var parsed = repo.parse(str);
+        var parsed = repo.parseUrl(str);
         owner = parsed.owner;
         name = name || parsed.name;
       }
@@ -82,10 +89,10 @@ repo.repository = function(owner, name) {
   }
 
   if (/\W/.test(owner)) {
-    var parsed = repo.parse(owner);
-    if (utils.isString(parsed.repository)) {
-      owner = parsed.owner;
-      name = parsed.name;
+    var res = repo.parseUrl(owner);
+    if (utils.isString(res.repository)) {
+      owner = res.owner;
+      name = res.name;
     }
   }
 
@@ -140,7 +147,7 @@ repo.homepage = function(repository, options) {
   }
 
   if (/[:.#]/.test(opts.repository)) {
-    var parsed = repo.parse(opts.repository, opts);
+    var parsed = repo.parseUrl(opts.repository, opts);
     // merge opts last, but override `repository` with parsed value
     opts = utils.merge({}, parsed, opts);
     opts.repository = parsed.repository;
@@ -333,7 +340,7 @@ repo.isGithubUrl = function(str) {
  * @api public
  */
 
-repo.parse = function(repoUrl, options) {
+repo.parseUrl = function(repoUrl, options) {
   if (!utils.isString(repoUrl)) {
     throw new TypeError('expected repository URL to be a string');
   }
@@ -354,7 +361,7 @@ repo.parse = function(repoUrl, options) {
 };
 
 /**
- * Parse a GitHub `repository` path or URL by calling `repo.parse()`,
+ * Parse a GitHub `repository` path or URL by calling `repo.parseUrl()`,
  * then expands it into an object of URLs. (the object also includes
  * properties returned from `.parse()`). A file path maybe be passed
  * as the second argument to include `raw` and `file` properties in the
@@ -394,8 +401,8 @@ repo.parse = function(repoUrl, options) {
  * @api public
  */
 
-repo.expand = function(repository, file) {
-  var config = repo.parse(repository);
+repo.expandUrl = function(repository, file) {
+  var config = repo.parseUrl(repository);
 
   repository = config.repository;
   var github = 'https://github.com';
@@ -422,6 +429,104 @@ repo.expand = function(repository, file) {
     urls.raw = repo.raw(repository, branch, file);
   }
   return urls;
+};
+
+repo.gitConfigPath = function(type) {
+  return utils.gitConfigPath(type);
+};
+
+repo.gitConfig = function(options) {
+  if (gitConfigCache) return gitConfigCache;
+  options = options || {};
+  if (typeof options.type === 'undefined') {
+    options.type = 'global';
+  }
+  var configPath = repo.gitConfigPath(options.type);
+  if (utils.isString(configPath)) {
+    var git = utils.parseGitConfig.sync({path: configPath});
+    if (git && git.user) {
+      git = utils.merge(git, utils.parseGitConfig.keys(git));
+    }
+    gitConfigCache = git;
+    return git;
+  }
+};
+
+repo.gitUser = function(options) {
+  var git = repo.gitConfig(options);
+  if (utils.isObject(git)) {
+    return git.user;
+  }
+};
+
+repo.gitUserName = function(options) {
+  var user = repo.gitUser(options);
+  if (utils.isObject(user)) {
+    return user.name;
+  }
+};
+
+repo.gitUserEmail = function(options) {
+  var user = repo.gitUser(options);
+  if (utils.isObject(user)) {
+    return user.email;
+  }
+};
+
+repo.author = function(config, options) {
+  if (!utils.isObject(config)) {
+    throw new TypeError('expected an object');
+  }
+  var author = config.author;
+  if (utils.isString(author)) {
+    author = utils.parseAuthor(author);
+  }
+  if (utils.isObject(author)) {
+    return utils.omitEmpty(author);
+  }
+};
+
+repo.authorName = function(config, options) {
+  var author = repo.author(config, options);
+  if (utils.isObject(author)) {
+    return author.name;
+  }
+};
+
+repo.authorUrl = function(config, options) {
+  var author = repo.author(config, options);
+  if (utils.isObject(author)) {
+    return author.url;
+  }
+};
+
+repo.username = function(config, options) {
+  if (!utils.isObject(config)) {
+    throw new TypeError('expected an object');
+  }
+
+  var username = null;
+  if (typeof config.username === 'string') {
+    username = config.username;
+  }
+
+  if (!utils.isString(username)) {
+    var authorUrl = repo.authorUrl(config, options);
+    if (!/github\.com/.test(authorUrl)) {
+      authorUrl = null;
+    }
+
+    var str = authorUrl || config.repository || config.homepage;
+    var parsed = utils.parseGithubUrl(str);
+    if (parsed && parsed.owner) {
+      username = parsed.owner;
+    }
+  }
+
+  if (!utils.isString(username)) {
+    username = repo.gitUserName(options);
+  }
+  return username;
 };
 
 /**
