@@ -8,12 +8,15 @@ require = utils;
  * Module depedencies
  */
 
+require('git-config-path');
 require('is-absolute');
 require('kind-of', 'typeOf');
 require('mixin-deep', 'merge');
 require('omit-empty');
-require('project-name', 'project');
+require('parse-author');
+require('parse-git-config');
 require('parse-github-url');
+require('project-name', 'project');
 require = fn;
 
 /**
