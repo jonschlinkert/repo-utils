@@ -60,16 +60,6 @@ describe('.repository', function() {
       cb();
     }
   });
-
-  it('should throw an error when invalid args are passed', function(cb) {
-    try {
-      repo.repository('https://github.com');
-      cb(new Error('expected an error'));
-    } catch (err) {
-      assert.equal(err.message, 'expected name to be a string');
-      cb();
-    }
-  });
 });
 
 describe('.repository', function() {

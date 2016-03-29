@@ -67,12 +67,18 @@ repo.repository = function(owner, name) {
   if (utils.isObject(owner)) {
     var obj = owner;
     // support config object from parsed URL
-    var str = obj.repository || obj.repo || obj.pathname;
-    if (utils.isString(str)) {
-      return str;
-    }
+
     owner = obj.owner;
-    name = obj.name;
+    name = obj.name || name;
+
+    if (!utils.isString(owner)) {
+      var str = obj.repository || obj.repo || obj.pathname;
+      if (utils.isString(str)) {
+        var parsed = repo.parse(str);
+        owner = parsed.owner;
+        name = name || parsed.name;
+      }
+    }
   }
 
   if (/\W/.test(owner)) {
@@ -86,10 +92,8 @@ repo.repository = function(owner, name) {
   if (!utils.isString(owner)) {
     throw new TypeError('expected owner to be a string');
   }
-  if (!utils.isString(name)) {
-    throw new TypeError('expected name to be a string');
-  }
-  return owner + '/' + name;
+
+  return owner + (name ? '/' + name : '');
 };
 
 /**
@@ -330,7 +334,7 @@ repo.isGithubUrl = function(str) {
  */
 
 repo.parse = function(repoUrl, options) {
-  if (!utils.isString(repoUrl) || !/\//.test(repoUrl)) {
+  if (!utils.isString(repoUrl)) {
     throw new TypeError('expected repository URL to be a string');
   }
 
