@@ -500,32 +500,36 @@ repo.authorUrl = function(config, options) {
   }
 };
 
+repo.authorUsername = function(config, options) {
+  var author = repo.author(config, options);
+  if (utils.isObject(author)) {
+    return author.username;
+  }
+};
+
 repo.username = function(config, options) {
   if (!utils.isObject(config)) {
     throw new TypeError('expected an object');
   }
 
-  var username = null;
-  if (typeof config.username === 'string') {
-    username = config.username;
-  }
+  var username = repo.authorUsername(config) || null;
 
   if (!utils.isString(username)) {
     var authorUrl = repo.authorUrl(config, options);
-    if (!/github\.com/.test(authorUrl)) {
-      authorUrl = null;
-    }
-
-    var str = authorUrl || config.repository || config.homepage;
-    var parsed = utils.parseGithubUrl(str);
-    if (parsed && parsed.owner) {
-      username = parsed.owner;
+    if (/github\.com/.test(authorUrl)) {
+      var parsed = utils.parseGithubUrl(authorUrl);
+      username = parsed && parsed.owner || null;
     }
   }
-
   if (!utils.isString(username)) {
     username = repo.gitUserName(options);
   }
+  if (!utils.isString(username)) {
+    var str = config.repository || config.homepage;
+    var parsed = utils.parseGithubUrl(str);
+    username = parsed && parsed.owner || null;
+  }
+
   return username;
 };
 
