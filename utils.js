@@ -8,6 +8,8 @@ require = utils;
  * Module depedencies
  */
 
+require('extend-shallow', 'extend');
+require('get-value');
 require('git-config-path');
 require('is-absolute');
 require('kind-of', 'typeOf');
@@ -18,6 +20,14 @@ require('parse-git-config');
 require('parse-github-url');
 require('project-name', 'project');
 require = fn;
+
+/**
+ * Get `prop` from the given object
+ */
+
+utils.get = function(obj, prop) {
+  return utils.getValue(obj || {}, prop);
+};
 
 /**
  * Return true if `val` is an object

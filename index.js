@@ -19,16 +19,16 @@ var repo = exports = module.exports;
  * - absolute file path to a directory on the local file system (`.` and `''` may be used as aliases for the current working directory)
  *
  * ```js
- * repoUtils.name(process.cwd());
+ * repo.name(process.cwd());
  * //=> 'repo-utils'
- * repoUtils.name('.');
+ * repo.name('.');
  * //=> 'repo-utils'
- * repoUtils.name();
+ * repo.name();
  * //=> 'repo-utils'
  *
- * repoUtils.name('https://github.com/jonschlinkert/repo-utils');
+ * repo.name('https://github.com/jonschlinkert/repo-utils');
  * //=> 'repo-utils'
- * repoUtils.name('jonschlinkert/repo-utils');
+ * repo.name('jonschlinkert/repo-utils');
  * //=> 'repo-utils'
  * ```
  *
@@ -55,13 +55,13 @@ repo.name = function(cwd) {
  * - list of arguments in the form of `owner, name`
  *
  * ```js
- * repoUtils.repository('jonschlinkert', 'micromatch');
+ * repo.repository('jonschlinkert', 'micromatch');
  * //=> 'jonschlinkert/micromatch'
  *
- * repoUtils.repository({owner: 'jonschlinkert', repository: 'micromatch'});
+ * repo.repository({owner: 'jonschlinkert', repository: 'micromatch'});
  * //=> 'jonschlinkert/micromatch'
  *
- * repoUtils.repository('https://github.com/jonschlinkert/micromatch');
+ * repo.repository('https://github.com/jonschlinkert/micromatch');
  * //=> 'jonschlinkert/micromatch'
  * ```
  * @param {String} `owner` Repository owner
@@ -108,7 +108,7 @@ repo.repository = function(owner, name) {
  * repository URL.
  *
  * ```js
- * repoUtils.homepage('jonschlinkert/repo-utils');
+ * repo.homepage('jonschlinkert/repo-utils');
  * //=> 'https://github.com/jonchlinkert/repo-utils'
  * ```
  * @param {String} `repository` Repository in the form of `owner/project-name`
@@ -163,7 +163,7 @@ repo.homepage = function(repository, options) {
  * Create a GitHub `issues` URL.
  *
  * ```js
- * repoUtils.isses('jonschlinkert/micromatch');
+ * repo.isses('jonschlinkert/micromatch');
  * //=> 'https://github.com/jonchlinkert/micromatch/issues'
  * ```
  * @param {String} `repository` Repository in the form of `owner/project-name` or full github project URL.
@@ -180,7 +180,7 @@ repo.issues = function(repository, options) {
  * Create a GitHub `bugs` URL. Alias for [.issues](#issues).
  *
  * ```js
- * repoUtils.bugs('jonschlinkert/micromatch');
+ * repo.bugs('jonschlinkert/micromatch');
  * //=> 'https://github.com/jonchlinkert/micromatch/issues'
  * ```
  * @param {String} `repository` Repository in the form of `owner/project-name`
@@ -197,7 +197,7 @@ repo.bugs = function(repository, options) {
  * Create a github `https` URL.
  *
  * ```js
- * repoUtils.https('jonschlinkert/micromatch');
+ * repo.https('jonschlinkert/micromatch');
  * //=> 'https://github.com/jonchlinkert/micromatch'
  * ```
  * @param  {String} `repository` Repository in the form of `owner/project-name`
@@ -221,7 +221,7 @@ repo.https = function(repository, options, branch) {
  * Create a travis URL.
  *
  * ```js
- * repoUtils.travis('jonschlinkert/micromatch');
+ * repo.travis('jonschlinkert/micromatch');
  * //=> 'https://travis-ci.org/jonschlinkert/micromatch'
  * ```
  * @param  {String} `repository` Repository in the form of `owner/project-name`
@@ -240,10 +240,10 @@ repo.travis = function(repository, branch) {
  * Create a URL for a file in a github repository.
  *
  * ```js
- * repoUtils.file('https://github.com/jonschlinkert/micromatch', 'README.md');
+ * repo.file('https://github.com/jonschlinkert/micromatch', 'README.md');
  * //=> 'https://raw.githubusercontent.com/jonschlinkert/micromatch/master/README.md'
  *
- * repoUtils.raw('jonschlinkert/micromatch', 'README.md');
+ * repo.raw('jonschlinkert/micromatch', 'README.md');
  * //=> 'https://raw.githubusercontent.com/jonschlinkert/micromatch/master/README.md'
  * ```
  * @param  {String} `repository` Repository in the form of `owner/project-name` or full GitHub repository URL.
@@ -266,10 +266,10 @@ repo.file = function(repository, branch, path) {
  * Create a github "raw" content URL.
  *
  * ```js
- * repoUtils.raw('https://github.com/jonschlinkert/micromatch', 'README.md');
+ * repo.raw('https://github.com/jonschlinkert/micromatch', 'README.md');
  * //=> 'https://raw.githubusercontent.com/jonschlinkert/micromatch/master/README.md'
  *
- * repoUtils.raw('jonschlinkert/micromatch', 'README.md');
+ * repo.raw('jonschlinkert/micromatch', 'README.md');
  * //=> 'https://raw.githubusercontent.com/jonschlinkert/micromatch/master/README.md'
  * ```
  * @param  {String} `repository` Repository in the form of `owner/project-name`
@@ -318,7 +318,7 @@ repo.isGithubUrl = function(str) {
  *
  * ```js
  * // see the tests for supported formats
- * repoUtils.parse('https://raw.githubusercontent.com/jonschlinkert/micromatch/master/README.md');
+ * repo.parse('https://raw.githubusercontent.com/jonschlinkert/micromatch/master/README.md');
  *
  * // results in:
  * { protocol: 'https:',
@@ -346,10 +346,11 @@ repo.parseUrl = function(repoUrl, options) {
   }
 
   var defaults = {protocol: 'https:', slashes: true, hostname: 'github.com'};
-  options = utils.omitEmpty(options || {});
+  options = utils.omitEmpty(utils.extend({}, options));
 
+  // if `foo/bar` is passed, use github.com as default host
   if (!/:\/\//.test(repoUrl)) {
-    repoUrl = 'https://github.com/' + repoUrl;
+    repoUrl = (options.host || 'https://github.com/') + repoUrl;
   }
 
   var obj = utils.omitEmpty(url.parse(repoUrl));
@@ -369,7 +370,7 @@ repo.parseUrl = function(repoUrl, options) {
  *
  * ```js
  * // see the tests for supported formats
- * repoUtils.expand('https://github.com/abc/xyz.git', 'README.md');
+ * repo.expand('https://github.com/abc/xyz.git', 'README.md');
  *
  * // results in:
  * { protocol: 'https:',
@@ -431,9 +432,40 @@ repo.expandUrl = function(repository, file) {
   return urls;
 };
 
+/**
+ * Get the local git config path, or global if a local `.git` repository does not exist.
+ *
+ * ```js
+ * console.log(repo.gitConfigPath());
+ * //=> /Users/jonschlinkert/dev/repo-utils/.git/config
+ *
+ * // if local .git repo does not exist
+ * console.log(repo.gitConfigPath());
+ * /Users/jonschlinkert/.gitconfig
+ *
+ * // get global path
+ * console.log(repo.gitConfigPath('global'));
+ * /Users/jonschlinkert/.gitconfig
+ * ```
+ * @param {String} `type` Pass `global` to get the global git config path regardless of whether or not a local repository exists.
+ * @return {String} Returns the local or global git path
+ * @api public
+ */
+
 repo.gitConfigPath = function(type) {
   return utils.gitConfigPath(type);
 };
+
+/**
+ * Get and parse global git config.
+ *
+ * ```js
+ * console.log(repo.gitConfig());
+ * ```
+ * @param {Object} `options` To get a local `.git` config, pass `{type: 'local'}`
+ * @return {Object}
+ * @api public
+ */
 
 repo.gitConfig = function(options) {
   if (gitConfigCache) return gitConfigCache;
@@ -445,7 +477,7 @@ repo.gitConfig = function(options) {
   if (utils.isString(configPath)) {
     var git = utils.parseGitConfig.sync({path: configPath});
     if (git && git.user) {
-      git = utils.merge(git, utils.parseGitConfig.keys(git));
+      utils.merge(git, utils.parseGitConfig.keys(git));
     }
     gitConfigCache = git;
     return git;
@@ -453,83 +485,257 @@ repo.gitConfig = function(options) {
 };
 
 repo.gitUser = function(options) {
-  var git = repo.gitConfig(options);
-  if (utils.isObject(git)) {
-    return git.user;
-  }
+  return utils.get(repo.gitConfig(options), 'user');
 };
 
 repo.gitUserName = function(options) {
-  var user = repo.gitUser(options);
-  if (utils.isObject(user)) {
-    return user.name;
-  }
+  return utils.get(repo.gitUser(options), 'name');
 };
-
 repo.gitUserEmail = function(options) {
-  var user = repo.gitUser(options);
-  if (utils.isObject(user)) {
-    return user.email;
-  }
+  return utils.get(repo.gitUser(options), 'email');
 };
 
-repo.author = function(config, options) {
+/**
+ * Get an owner string from the given object or string.
+ *
+ * ```js
+ * console.log(repo.owner(require('./package.json')));
+ * //=> 'jonschlinkert'
+ * ```
+ * @param {String|Object} `config` If an object is passed, it must have a `repository`, `url` or `author` propert (looked for in that order), otherwise if a string is passed it must be parse-able by the [parseUrl]() method.
+ * @return {String}
+ * @api public
+ */
+
+repo.owner = function(config) {
+  var owner;
+  if (utils.isString(config)) {
+    config = repo.parseUrl(config);
+  }
+  if (utils.isObject(config)) {
+    owner = utils.get(config, 'owner');
+    if (typeof owner === 'undefined' && config.repository) {
+      var repository = config.repository;
+      if (utils.isObject(repository)) {
+        repository = repository.url;
+      }
+      config = repo.parseUrl(repository);
+      owner = utils.get(config, 'owner');
+    }
+
+    if (typeof owner === 'undefined' && config.url) {
+      config = repo.parseUrl(config.url);
+      owner = utils.get(config, 'owner');
+    }
+
+    if (typeof owner === 'undefined' && config.author) {
+      var author = repo.parseAuthor(config.author);
+      config = repo.parseUrl(author.url);
+      owner = utils.get(config, 'owner');
+    }
+  }
+  return owner;
+};
+
+/**
+ * Normalize a "person" object. If a "person" string is passed (like `author`, `contributor` etc)
+ * it is parsed into an object, otherwise the object is returned.
+ *
+ * ```js
+ * console.log(repo.person('Brian Woodward (https://github.com/doowb)'));
+ * //=> { name: 'Brian Woodward', url: 'https://github.com/doowb' }
+ * console.log(repo.person({ name: 'Brian Woodward', url: 'https://github.com/doowb' }));
+ * //=> { name: 'Brian Woodward', url: 'https://github.com/doowb' }
+ * ```
+ * @param {String|Object} `val`
+ * @return {Object}
+ * @api public
+ */
+
+repo.person = function(val) {
+  var person = val;
+  if (utils.isString(val)) {
+    person = utils.parseAuthor(val);
+  }
+  if (utils.isObject(person)) {
+    person = utils.omitEmpty(person);
+  }
+  return person;
+};
+
+/**
+ * Returns an `author` object from the given given config object. If `config.author` is
+ * a string it will be parsed into an object.
+ *
+ * ```js
+ * console.log(repo.author({
+ *   author: 'Brian Woodward (https://github.com/doowb)'
+ * }));
+ * //=> { name: 'Brian Woodward', url: 'https://github.com/doowb' }
+ *
+ * console.log(repo.author({
+ *   name: 'Brian Woodward',
+ *   url: 'https://github.com/doowb'
+ * }));
+ * //=> { name: 'Brian Woodward', url: 'https://github.com/doowb' }
+ * ```
+ * @param {Object} `config` Object with an `author` property
+ * @return {Object}
+ * @api public
+ */
+
+repo.author = function(config) {
   if (!utils.isObject(config)) {
     throw new TypeError('expected an object');
   }
-  var author = config.author;
-  if (utils.isString(author)) {
-    author = utils.parseAuthor(author);
-  }
-  if (utils.isObject(author)) {
-    return utils.omitEmpty(author);
-  }
+  return repo.person(config.author);
 };
+
+/**
+ * Returns the `author.name` from the given config object. If `config.author` is
+ * a string it will be parsed into an object first.
+ *
+ * ```js
+ * console.log(repo.authorName({
+ *   author: 'Brian Woodward (https://github.com/doowb)'
+ * }));
+ * //=> 'Brian Woodward'
+ *
+ * console.log(repo.authorName({
+ *   name: 'Brian Woodward',
+ *   url: 'https://github.com/doowb'
+ * }));
+ * //=> 'Brian Woodward'
+ * ```
+ * @param {Object} `config` Object with an `author` property
+ * @return {Object}
+ * @api public
+ */
 
 repo.authorName = function(config, options) {
-  var author = repo.author(config, options);
-  if (utils.isObject(author)) {
-    return author.name;
-  }
+  return utils.get(repo.author(config, options), 'name');
 };
+
+/**
+ * Returns the `author.url` from the given config object. If `config.author` is
+ * a string it will be parsed into an object first.
+ *
+ * ```js
+ * console.log(repo.authorUrl({
+ *   author: 'Brian Woodward (https://github.com/doowb)'
+ * }));
+ * //=> 'https://github.com/doowb'
+ *
+ * console.log(repo.authorUrl({
+ *   name: 'Brian Woodward',
+ *   url: 'https://github.com/doowb'
+ * }));
+ * //=> 'https://github.com/doowb'
+ * ```
+ * @param {Object} `config` Object with an `author` property
+ * @return {Object}
+ * @api public
+ */
 
 repo.authorUrl = function(config, options) {
-  var author = repo.author(config, options);
-  if (utils.isObject(author)) {
-    return author.url;
-  }
+  return utils.get(repo.author(config, options), 'url');
 };
 
-repo.authorUsername = function(config, options) {
-  var author = repo.author(config, options);
-  if (utils.isObject(author)) {
-    return author.username;
-  }
+/**
+ * Returns the `author.email` from the given config object. If `config.author` is
+ * a string it will be parsed into an object first.
+ *
+ * ```js
+ * console.log(repo.authorEmail({
+ *   author: 'Brian Woodward <brian.woodward@sellside.com> (https://github.com/doowb)'
+ * }));
+ * //=> 'brian.woodward@sellside.com'
+ *
+ * console.log(repo.authorEmail({
+ *   name: 'Brian Woodward',
+ *   url: 'https://github.com/doowb',
+ *   email: 'brian.woodward@sellside.com'
+ * }));
+ * //=> 'brian.woodward@sellside.com'
+ * ```
+ * @param {Object} `config` Object with an `author` property
+ * @return {Object}
+ * @api public
+ */
+
+repo.authorEmail = function(config, options) {
+  return utils.get(repo.author(config, options), 'email');
 };
+
+/**
+ * Returns the `author.username` from the given config object. If `config.author` is
+ * a string it will be parsed into an object first.
+ *
+ * ```js
+ * console.log(repo.authorUsername({
+ *   author: 'Brian Woodward <brian.woodward@sellside.com> (https://github.com/doowb)'
+ * }));
+ * //=> 'doowb'
+ *
+ * console.log(repo.authorUsername({
+ *   name: 'Brian Woodward',
+ *   url: 'https://github.com/doowb',
+ *   email: 'brian.woodward@sellside.com'
+ * }));
+ * //=> 'doowb'
+ * ```
+ * @param {Object} `config` Object with an `author` property
+ * @return {Object}
+ * @api public
+ */
+
+repo.authorUsername = function(config, options) {
+  return utils.get(repo.author(config, options), 'username');
+};
+
+/**
+ * Returns a `username` from the given config object, by first attempting to get
+ * `author.username`, then
+ *
+ * ```js
+ * console.log(repo.username({
+ *   author: 'Brian Woodward <brian.woodward@sellside.com> (https://github.com/doowb)'
+ * }));
+ * //=> 'doowb'
+ *
+ * console.log(repo.username({
+ *   name: 'Brian Woodward',
+ *   url: 'https://github.com/doowb',
+ *   email: 'brian.woodward@sellside.com'
+ * }));
+ * //=> 'doowb'
+ * ```
+ * @param {Object} `config` Object with an `author` property
+ * @return {Object}
+ * @api public
+ */
 
 repo.username = function(config, options) {
   if (!utils.isObject(config)) {
     throw new TypeError('expected an object');
   }
 
-  var username = repo.authorUsername(config) || null;
-
+  var username = repo.authorUsername(config);
   if (!utils.isString(username)) {
     var authorUrl = repo.authorUrl(config, options);
     if (/github\.com/.test(authorUrl)) {
-      var parsed = utils.parseGithubUrl(authorUrl);
-      username = parsed && parsed.owner || null;
+      username = utils.get(utils.parseGithubUrl(authorUrl), 'owner');
     }
   }
+
   if (!utils.isString(username)) {
     username = repo.gitUserName(options);
   }
+
   if (!utils.isString(username)) {
     var str = config.repository || config.homepage;
-    var parsed = utils.parseGithubUrl(str);
-    username = parsed && parsed.owner || null;
+    username = utils.get(utils.parseGithubUrl(str), 'owner');
   }
-
   return username;
 };
 
@@ -544,3 +750,9 @@ repo.username = function(config, options) {
 repo.isMaster = function(branch) {
   return typeof branch === 'undefined' || branch === 'master';
 };
+
+/**
+ * Expose `parseAuthor`
+ */
+
+repo.parseAuthor = utils.parseAuthor;
