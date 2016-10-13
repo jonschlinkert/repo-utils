@@ -3,7 +3,7 @@
 var url = require('url');
 var util = require('util');
 var utils = require('./utils');
-var gitConfigCache;
+var gitConfigCache = {};
 
 /**
  * Expose `repoUtils`
@@ -469,18 +469,24 @@ repo.gitConfigPath = function(type) {
  */
 
 repo.gitConfig = function(options) {
-  if (gitConfigCache) return gitConfigCache;
+  var cwd = process.cwd();
+  if (gitConfigCache[cwd]) {
+    return gitConfigCache[cwd];
+  }
+
   options = options || {};
   if (typeof options.type === 'undefined') {
     options.type = 'global';
   }
+
   var configPath = repo.gitConfigPath(options.type);
   if (utils.isString(configPath)) {
     var git = utils.parseGitConfig.sync({path: configPath});
     if (git && git.user) {
       utils.merge(git, utils.parseGitConfig.keys(git));
     }
-    gitConfigCache = git;
+
+    gitConfigCache[cwd] = git;
     return git;
   }
 };
