@@ -24,7 +24,7 @@ describe('.owner', function() {
 
   it('should get owner from a package.json object with author', function() {
     var actual = repo.owner({
-      author: 'Brian Woodward (https://github.com/doowb)',
+      author: 'Brian Woodward (https://github.com/doowb)'
     });
     assert.deepEqual(actual, 'doowb');
   });

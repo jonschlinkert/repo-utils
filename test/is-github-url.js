@@ -1,7 +1,6 @@
 'use strict';
 
 require('mocha');
-var url = require('url');
 var assert = require('assert');
 var repo = require('../');
 
