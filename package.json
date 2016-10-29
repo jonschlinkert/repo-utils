@@ -1,7 +1,7 @@
 {
   "name": "repo-utils",
   "description": "Utils for normalizing and formatting repo data.",
-  "version": "0.3.5",
+  "version": "0.3.6",
   "homepage": "https://github.com/jonschlinkert/repo-utils",
   "author": "Jon Schlinkert (https://github.com/jonschlinkert)",
   "contributors": [
