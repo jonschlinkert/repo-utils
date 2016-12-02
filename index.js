@@ -429,7 +429,7 @@ repo.expandUrl = function(repository, file) {
     urls.file = repo.file(repository, branch, file);
     urls.raw = repo.raw(repository, branch, file);
   }
-  urls.name = urls.name.split('%20').join(' ');
+  urls.name = urls.name && urls.name.split('%20').join(' ');
   return urls;
 };
 
