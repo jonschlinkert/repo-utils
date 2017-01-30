@@ -3,6 +3,8 @@
 var url = require('url');
 var util = require('util');
 var utils = require('./utils');
+var Cache = require('fragment-cache');
+var cache = new Cache();
 var gitConfigCache = {};
 
 /**
@@ -403,34 +405,42 @@ repo.parseUrl = function(repoUrl, options) {
  */
 
 repo.expandUrl = function(repository, file) {
-  var config = repo.parseUrl(repository);
+  var key = repository + file;
+  if (cache.has('expandUrl', key)) {
+    return cache.get('expandUrl', key);
+  }
 
-  repository = config.repository;
   var github = 'https://github.com';
-  var branch = config.branch;
+  var obj = repo.parseUrl(repository);
+  var repoPath = obj.repository;
+  var branch = obj.branch;
 
   var raw = 'https://raw.githubusercontent.com';
-  var api = config.host !== 'github.com'
-    ? config.host + '/api/v3'
+  var api = obj.host !== 'github.com'
+    ? obj.host + '/api/v3'
     : 'api.github.com';
 
-  var urls = config;
-  urls.host_api = api;
-  urls.host_raw = raw;
-  urls.api = 'https://' + api + '/repos/' + repository;
-  urls.tarball = urls.api + '/tarball/' + branch;
-  urls.clone = github + '/' + repository;
-  urls.zip = urls.clone + '/archive/' + branch + '.zip';
+  obj.host_api = api;
+  obj.host_raw = raw;
+  obj.api = 'https://' + api + '/repos/' + repoPath;
+  obj.raw = repo.raw(repoPath, branch, file || '');
+  obj.url = github + '/' + repoPath;
+  obj.git = obj.url + '.git';
+  obj.clone = obj.git;
+  obj.tarball = obj.api + '/tarball/' + branch;
+  obj.zip = obj.url + '/archive/' + branch + '.zip';
+  obj.https = repo.https(obj, branch);
+  obj.travis = repo.travis(repoPath, branch);
+  obj.pkg = repo.file(repoPath, branch, 'package.json');
+  obj.readme = repo.file(repoPath, branch, 'README.md');
+  obj.file = repo.file(repoPath, branch, file || '');
 
-  urls.https = repo.https(config, branch);
-  urls.travis = repo.travis(repository, branch);
-
-  if (utils.isString(file)) {
-    urls.file = repo.file(repository, branch, file);
-    urls.raw = repo.raw(repository, branch, file);
+  if (utils.isString(obj.name)) {
+    obj.name = obj.name.split('%20').join(' ');
   }
-  urls.name = urls.name && urls.name.split('%20').join(' ');
-  return urls;
+
+  cache.set('expandUrl', key, obj);
+  return obj;
 };
 
 /**
@@ -756,6 +766,14 @@ repo.username = function(config, options) {
 
 repo.isMaster = function(branch) {
   return typeof branch === 'undefined' || branch === 'master';
+};
+
+/**
+ * Clear the cache
+ */
+
+repo.clear = function() {
+  cache.caches = {};
 };
 
 /**
