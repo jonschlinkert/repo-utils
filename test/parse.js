@@ -13,7 +13,7 @@ describe('.parse', function() {
     assert.equal(urls.repository, 'abc/xyz');
     assert.equal(urls.branch, 'master');
     assert.equal(urls.protocol, 'https:');
-    assert.equal(urls.path, '/abc/xyz.git');
+    assert.equal(urls.path, 'abc/xyz.git');
     assert.equal(urls.host, 'github.com');
   });
 
@@ -25,7 +25,7 @@ describe('.parse', function() {
     assert.equal(urls.repository, 'abc/xyz');
     assert.equal(urls.branch, 'master');
     assert.equal(urls.protocol, 'https:');
-    assert.equal(urls.path, '/abc/xyz');
+    assert.equal(urls.path, 'abc/xyz');
     assert.equal(urls.host, 'github.com');
   });
 
@@ -37,7 +37,7 @@ describe('.parse', function() {
     assert.equal(urls.repository, 'abc/xyz');
     assert.equal(urls.branch, 'master');
     assert.equal(urls.protocol, 'https:');
-    assert.equal(urls.path, '/abc/xyz');
+    assert.equal(urls.path, 'abc/xyz');
     assert.equal(urls.host, 'foo.com');
   });
 
@@ -49,7 +49,7 @@ describe('.parse', function() {
     assert.equal(urls.repository, 'foo/bar');
     assert.equal(urls.branch, 'master');
     assert.equal(urls.protocol, 'https:');
-    assert.equal(urls.path, '/foo/bar/master/README.md');
+    assert.equal(urls.path, 'foo/bar/master/README.md');
     assert.equal(urls.host, 'raw.githubusercontent.com');
   });
 
@@ -61,7 +61,7 @@ describe('.parse', function() {
     assert.equal(urls.repository, 'abc/xyz');
     assert.equal(urls.branch, 'master');
     assert.equal(urls.protocol, 'https:');
-    assert.equal(urls.path, '/abc/xyz');
+    assert.equal(urls.path, 'abc/xyz');
     assert.equal(urls.host, 'github.com');
   });
 

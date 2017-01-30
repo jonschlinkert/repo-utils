@@ -2,20 +2,17 @@
 
 var gulp = require('gulp');
 var mocha = require('gulp-mocha');
-var unused = require('gulp-unused');
 var istanbul = require('gulp-istanbul');
 var eslint = require('gulp-eslint');
 
-var lint = ['index.js', 'lib/*.js'];
-
 gulp.task('coverage', function() {
-  return gulp.src(lint)
+  return gulp.src(['index.js', 'utils.js'])
     .pipe(istanbul())
     .pipe(istanbul.hookRequire());
 });
 
 gulp.task('test', ['coverage'], function() {
-  return gulp.src('test.js')
+  return gulp.src('test/*.js')
     .pipe(mocha({reporter: 'spec'}))
     .pipe(istanbul.writeReports())
     .pipe(istanbul.writeReports({
@@ -25,14 +22,9 @@ gulp.task('test', ['coverage'], function() {
 });
 
 gulp.task('lint', function() {
-  return gulp.src(lint.concat(['test/*.js', 'gulpfile.js']))
+  return gulp.src(['*.js', 'test/*.js', 'gulpfile.js'])
     .pipe(eslint())
     .pipe(eslint.format());
-});
-
-gulp.task('unused', function() {
-  return gulp.src(['index.js', 'utils.js'])
-    .pipe(unused({keys: Object.keys(require('./utils.js'))}));
 });
 
 gulp.task('default', ['test', 'lint']);
