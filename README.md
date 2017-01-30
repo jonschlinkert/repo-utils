@@ -1,8 +1,17 @@
-# repo-utils [![NPM version](https://img.shields.io/npm/v/repo-utils.svg?style=flat)](https://www.npmjs.com/package/repo-utils) [![NPM downloads](https://img.shields.io/npm/dm/repo-utils.svg?style=flat)](https://npmjs.org/package/repo-utils) [![Linux Build Status](https://img.shields.io/travis/jonschlinkert/repo-utils.svg?style=flat&label=Travis)](https://travis-ci.org/jonschlinkert/repo-utils)
+# repo-utils [![NPM version](https://img.shields.io/npm/v/repo-utils.svg?style=flat)](https://www.npmjs.com/package/repo-utils) [![NPM monthly downloads](https://img.shields.io/npm/dm/repo-utils.svg?style=flat)](https://npmjs.org/package/repo-utils)  [![NPM total downloads](https://img.shields.io/npm/dt/repo-utils.svg?style=flat)](https://npmjs.org/package/repo-utils) [![Linux Build Status](https://img.shields.io/travis/jonschlinkert/repo-utils.svg?style=flat&label=Travis)](https://travis-ci.org/jonschlinkert/repo-utils)
 
 > Utils for normalizing and formatting repo data.
 
 You might also be interested in [parse-git-config](https://github.com/jonschlinkert/parse-git-config).
+
+<details>
+<summary><strong>Table of Contents</strong></summary>
+- [Install](#install)
+- [Usage](#usage)
+- [API](#api)
+- [Coverage](#coverage)
+- [About](#about)
+</details>
 
 ## Install
 
@@ -20,9 +29,14 @@ var repo = require('repo-utils');
 
 ## API
 
-### [.name](index.js#L40)
+### [.name](index.js#L42)
 
 Get the `name` for a repository from: - github repository path (`owner/project-name`) - github URL - absolute file path to a directory on the local file system (`.` and `''` may be used as aliases for the current working directory)
+
+**Params**
+
+* `cwd` **{String}**: Absolute file path or github URL
+* `returns` **{String}**: Project name
 
 **Example**
 
@@ -40,14 +54,15 @@ repo.name('jonschlinkert/repo-utils');
 //=> 'repo-utils'
 ```
 
-**Params**
-
-* `cwd` **{String}**: Absolute file path or github URL
-* `returns` **{String}**: Project name
-
-### [.repository](index.js#L73)
+### [.repository](index.js#L75)
 
 Create a github repository string in the form of `owner/name`, from: - full github repository URL - object returned from `url.parse` - list of arguments in the form of `owner, name`
+
+**Params**
+
+* `owner` **{String}**: Repository owner
+* `name` **{String}**: Repository name
+* `returns` **{String}**: Reps
 
 **Example**
 
@@ -62,15 +77,15 @@ repo.repository('https://github.com/jonschlinkert/micromatch');
 //=> 'jonschlinkert/micromatch'
 ```
 
-**Params**
-
-* `owner` **{String}**: Repository owner
-* `name` **{String}**: Repository name
-* `returns` **{String}**: Reps
-
-### [.homepage](index.js#L120)
+### [.homepage](index.js#L122)
 
 Create a `homepage` URL from a github repository path or github repository URL.
+
+**Params**
+
+* `repository` **{String}**: Repository in the form of `owner/project-name`
+* `options` **{Object}**
+* `returns` **{String}**: Formatted github homepage url.
 
 **Example**
 
@@ -79,15 +94,15 @@ repo.homepage('jonschlinkert/repo-utils');
 //=> 'https://github.com/jonchlinkert/repo-utils'
 ```
 
-**Params**
-
-* `repository` **{String}**: Repository in the form of `owner/project-name`
-* `options` **{Object}**
-* `returns` **{String}**: Formatted github homepage url.
-
-### [.issues](index.js#L175)
+### [.issues](index.js#L177)
 
 Create a GitHub `issues` URL.
+
+**Params**
+
+* `repository` **{String}**: Repository in the form of `owner/project-name` or full github project URL.
+* `options` **{Object}**
+* `returns` **{String}**
 
 **Example**
 
@@ -96,15 +111,15 @@ repo.isses('jonschlinkert/micromatch');
 //=> 'https://github.com/jonchlinkert/micromatch/issues'
 ```
 
-**Params**
-
-* `repository` **{String}**: Repository in the form of `owner/project-name` or full github project URL.
-* `options` **{Object}**
-* `returns` **{String}**
-
-### [.bugs](index.js#L192)
+### [.bugs](index.js#L194)
 
 Create a GitHub `bugs` URL. Alias for [.issues](#issues).
+
+**Params**
+
+* `repository` **{String}**: Repository in the form of `owner/project-name`
+* `options` **{Object}**
+* `returns` **{String}**
 
 **Example**
 
@@ -113,15 +128,16 @@ repo.bugs('jonschlinkert/micromatch');
 //=> 'https://github.com/jonchlinkert/micromatch/issues'
 ```
 
+### [.https](index.js#L212)
+
+Create a github `https` URL.
+
 **Params**
 
 * `repository` **{String}**: Repository in the form of `owner/project-name`
-* `options` **{Object}**
+* `options` **{Object|String}**: Options object or optional branch
+* `branch` **{String}**: Optionally specify a branch
 * `returns` **{String}**
-
-### [.https](index.js#L210)
-
-Create a github `https` URL.
 
 **Example**
 
@@ -130,16 +146,16 @@ repo.https('jonschlinkert/micromatch');
 //=> 'https://github.com/jonchlinkert/micromatch'
 ```
 
+### [.travis](index.js#L236)
+
+Create a travis URL.
+
 **Params**
 
 * `repository` **{String}**: Repository in the form of `owner/project-name`
 * `options` **{Object|String}**: Options object or optional branch
 * `branch` **{String}**: Optionally specify a branch
 * `returns` **{String}**
-
-### [.travis](index.js#L234)
-
-Create a travis URL.
 
 **Example**
 
@@ -148,16 +164,16 @@ repo.travis('jonschlinkert/micromatch');
 //=> 'https://travis-ci.org/jonschlinkert/micromatch'
 ```
 
-**Params**
-
-* `repository` **{String}**: Repository in the form of `owner/project-name`
-* `options` **{Object|String}**: Options object or optional branch
-* `branch` **{String}**: Optionally specify a branch
-* `returns` **{String}**
-
-### [.file](index.js#L256)
+### [.file](index.js#L258)
 
 Create a URL for a file in a github repository.
+
+**Params**
+
+* `repository` **{String}**: Repository in the form of `owner/project-name` or full GitHub repository URL.
+* `branch` **{String}**: Optionally specify a branch
+* `path` **{String}**: Path to the file, relative to the repository root.
+* `returns` **{String}**
 
 **Example**
 
@@ -169,16 +185,16 @@ repo.raw('jonschlinkert/micromatch', 'README.md');
 //=> 'https://raw.githubusercontent.com/jonschlinkert/micromatch/master/README.md'
 ```
 
-**Params**
-
-* `repository` **{String}**: Repository in the form of `owner/project-name` or full GitHub repository URL.
-* `branch` **{String}**: Optionally specify a branch
-* `path` **{String}**: Path to the file, relative to the repository root.
-* `returns` **{String}**
-
-### [.raw](index.js#L282)
+### [.raw](index.js#L284)
 
 Create a github "raw" content URL.
+
+**Params**
+
+* `repository` **{String}**: Repository in the form of `owner/project-name`
+* `options` **{Object|String}**: Options object or optional branch
+* `branch` **{String}**: Optionally specify a branch
+* `returns` **{String}**
 
 **Example**
 
@@ -190,16 +206,14 @@ repo.raw('jonschlinkert/micromatch', 'README.md');
 //=> 'https://raw.githubusercontent.com/jonschlinkert/micromatch/master/README.md'
 ```
 
-**Params**
-
-* `repository` **{String}**: Repository in the form of `owner/project-name`
-* `options` **{Object|String}**: Options object or optional branch
-* `branch` **{String}**: Optionally specify a branch
-* `returns` **{String}**
-
-### [.isGithubUrl](index.js#L305)
+### [.isGithubUrl](index.js#L307)
 
 Return true if the given string looks like a github URL.
+
+**Params**
+
+* `str` **{String}**: URL to test
+* `returns` **{Boolean}**
 
 **Example**
 
@@ -210,14 +224,15 @@ utils.isGithubUrl('https://foo.com/whatever');
 //=> false
 ```
 
-**Params**
-
-* `str` **{String}**: URL to test
-* `returns` **{Boolean}**
-
-### [.parseUrl](index.js#L343)
+### [.parseUrl](index.js#L345)
 
 Parse a GitHub repository URL or repository `owner/project-name` into an object.
+
+**Params**
+
+* `repositoryURL` **{String}**: Full repository URL, or repository path in the form of `owner/project-name`
+* `options` **{Object}**
+* `returns` **{Boolean}**
 
 **Example**
 
@@ -240,15 +255,15 @@ repo.parse('https://raw.githubusercontent.com/jonschlinkert/micromatch/master/RE
   branch: 'master' }
 ```
 
-**Params**
-
-* `repositoryURL` **{String}**: Full repository URL, or repository path in the form of `owner/project-name`
-* `options` **{Object}**
-* `returns` **{Boolean}**
-
-### [.expandUrl](index.js#L405)
+### [.expandUrl](index.js#L407)
 
 Parse a GitHub `repository` path or URL by calling `repo.parseUrl()`, then expands it into an object of URLs. (the object also includes properties returned from `.parse()`). A file path maybe be passed as the second argument to include `raw` and `file` properties in the result.
+
+**Params**
+
+* `repository` **{String}**
+* `file` **{String}**: Optionally pass a repository file path.
+* `returns` **{String}**
 
 **Example**
 
@@ -281,15 +296,14 @@ repo.expand('https://github.com/abc/xyz.git', 'README.md');
   raw: 'https://raw.githubusercontent.com/abc/xyz/master/README.md' }
 ```
 
-**Params**
-
-* `repository` **{String}**
-* `file` **{String}**: Optionally pass a repository file path.
-* `returns` **{String}**
-
-### [.gitConfigPath](index.js#L456)
+### [.gitConfigPath](index.js#L466)
 
 Get the local git config path, or global if a local `.git` repository does not exist.
+
+**Params**
+
+* `type` **{String}**: Pass `global` to get the global git config path regardless of whether or not a local repository exists.
+* `returns` **{String}**: Returns the local or global git path
 
 **Example**
 
@@ -306,14 +320,14 @@ console.log(repo.gitConfigPath('global'));
 /Users/jonschlinkert/.gitconfig
 ```
 
-**Params**
-
-* `type` **{String}**: Pass `global` to get the global git config path regardless of whether or not a local repository exists.
-* `returns` **{String}**: Returns the local or global git path
-
-### [.gitConfig](index.js#L471)
+### [.gitConfig](index.js#L481)
 
 Get and parse global git config.
+
+**Params**
+
+* `options` **{Object}**: To get a local `.git` config, pass `{type: 'local'}`
+* `returns` **{Object}**
 
 **Example**
 
@@ -321,14 +335,14 @@ Get and parse global git config.
 console.log(repo.gitConfig());
 ```
 
-**Params**
-
-* `options` **{Object}**: To get a local `.git` config, pass `{type: 'local'}`
-* `returns` **{Object}**
-
-### [.owner](index.js#L517)
+### [.owner](index.js#L527)
 
 Get an owner string from the given object or string.
+
+**Params**
+
+* `config` **{String|Object}**: If an object is passed, it must have a `repository`, `url` or `author` propert (looked for in that order), otherwise if a string is passed it must be parse-able by the [parseUrl](#parseUrl) method.
+* `returns` **{String}**
 
 **Example**
 
@@ -337,14 +351,14 @@ console.log(repo.owner(require('./package.json')));
 //=> 'jonschlinkert'
 ```
 
-**Params**
-
-* `config` **{String|Object}**: If an object is passed, it must have a `repository`, `url` or `author` propert (looked for in that order), otherwise if a string is passed it must be parse-able by the [parseUrl](#parseUrl) method.
-* `returns` **{String}**
-
-### [.person](index.js#L562)
+### [.person](index.js#L572)
 
 Normalize a "person" object. If a "person" string is passed (like `author`, `contributor` etc) it is parsed into an object, otherwise the object is returned.
+
+**Params**
+
+* `val` **{String|Object}**
+* `returns` **{Object}**
 
 **Example**
 
@@ -355,15 +369,15 @@ console.log(repo.person({ name: 'Brian Woodward', url: 'https://github.com/doowb
 //=> { name: 'Brian Woodward', url: 'https://github.com/doowb' }
 ```
 
-**Params**
-
-* `val` **{String|Object}**
-* `returns` **{Object}**
-
-### [.author](index.js#L594)
+### [.author](index.js#L604)
 
 Returns an `author` object from the given given config object. If `config.author` is a string it will be parsed into an object.
 
+**Params**
+
+* `config` **{Object}**: Object with an `author` property
+* `returns` **{Object}**
+
 **Example**
 
 ```js
@@ -379,15 +393,15 @@ console.log(repo.author({
 //=> { name: 'Brian Woodward', url: 'https://github.com/doowb' }
 ```
 
-**Params**
-
-* `config` **{Object}**: Object with an `author` property
-* `returns` **{Object}**
-
-### [.authorName](index.js#L622)
+### [.authorName](index.js#L632)
 
 Returns the `author.name` from the given config object. If `config.author` is a string it will be parsed into an object first.
 
+**Params**
+
+* `config` **{Object}**: Object with an `author` property
+* `returns` **{Object}**
+
 **Example**
 
 ```js
@@ -403,15 +417,15 @@ console.log(repo.authorName({
 //=> 'Brian Woodward'
 ```
 
-**Params**
-
-* `config` **{Object}**: Object with an `author` property
-* `returns` **{Object}**
-
-### [.authorUrl](index.js#L647)
+### [.authorUrl](index.js#L657)
 
 Returns the `author.url` from the given config object. If `config.author` is a string it will be parsed into an object first.
 
+**Params**
+
+* `config` **{Object}**: Object with an `author` property
+* `returns` **{Object}**
+
 **Example**
 
 ```js
@@ -427,15 +441,15 @@ console.log(repo.authorUrl({
 //=> 'https://github.com/doowb'
 ```
 
-**Params**
-
-* `config` **{Object}**: Object with an `author` property
-* `returns` **{Object}**
-
-### [.authorEmail](index.js#L673)
+### [.authorEmail](index.js#L683)
 
 Returns the `author.email` from the given config object. If `config.author` is a string it will be parsed into an object first.
 
+**Params**
+
+* `config` **{Object}**: Object with an `author` property
+* `returns` **{Object}**
+
 **Example**
 
 ```js
@@ -452,15 +466,15 @@ email: 'brian.woodward@sellside.com'
 //=> 'brian.woodward@sellside.com'
 ```
 
-**Params**
-
-* `config` **{Object}**: Object with an `author` property
-* `returns` **{Object}**
-
-### [.authorUsername](index.js#L699)
+### [.authorUsername](index.js#L709)
 
 Returns the `author.username` from the given config object. If `config.author` is a string it will be parsed into an object first.
 
+**Params**
+
+* `config` **{Object}**: Object with an `author` property
+* `returns` **{Object}**
+
 **Example**
 
 ```js
@@ -477,15 +491,15 @@ email: 'brian.woodward@sellside.com'
 //=> 'doowb'
 ```
 
-**Params**
-
-* `config` **{Object}**: Object with an `author` property
-* `returns` **{Object}**
-
-### [.username](index.js#L725)
+### [.username](index.js#L735)
 
 Returns a `username` from the given config object, by first attempting to get `author.username`, then
 
+**Params**
+
+* `config` **{Object}**: Object with an `author` property
+* `returns` **{Object}**
+
 **Example**
 
 ```js
@@ -502,20 +516,15 @@ email: 'brian.woodward@sellside.com'
 //=> 'doowb'
 ```
 
-**Params**
-
-* `config` **{Object}**: Object with an `author` property
-* `returns` **{Object}**
-
 ## Coverage
 
-As of October 29, 2016:
+As of January 30, 2017:
 
 ```
-Statements   : 100% ( 0/0 )
-Branches     : 100% ( 0/0 )
-Functions    : 100% ( 0/0 )
-Lines        : 100% ( 0/0 )
+Statements   : 88.99% ( 202/227 )
+Branches     : 79.69% ( 102/128 )
+Functions    : 73.33% ( 22/30 )
+Lines        : 88.99% ( 202/227 )
 ```
 
 ## About
@@ -533,19 +542,20 @@ Pull requests and stars are always welcome. For bugs and feature requests, [plea
 
 ### Contributors
 
-| **Commits** | **Contributor**<br/> | 
+| **Commits** | **Contributor** | 
 | --- | --- |
 | 35 | [jonschlinkert](https://github.com/jonschlinkert) |
+| 6 | [doowb](https://github.com/doowb) |
 | 1 | [tunnckoCore](https://github.com/tunnckoCore) |
 
 ### Building docs
 
-_(This document was generated by [verb-generate-readme](https://github.com/verbose/verb-generate-readme) (a [verb](https://github.com/verbose/verb) generator), please don't edit the readme directly. Any changes to the readme must be made in [.verb.md](.verb.md).)_
+_(This project's readme.md is generated by [verb](https://github.com/verbose/verb-generate-readme), please don't edit the readme directly. Any changes to the readme must be made in the [.verb.md](.verb.md) readme template.)_
 
-To generate the readme and API documentation with [verb](https://github.com/verbose/verb):
+To generate the readme, run the following command:
 
 ```sh
-$ npm install -g verb verb-generate-readme && verb
+$ npm install -g verbose/verb#dev verb-generate-readme && verb
 ```
 
 ### Running tests
@@ -553,7 +563,7 @@ $ npm install -g verb verb-generate-readme && verb
 Install dev dependencies:
 
 ```sh
-$ npm install -d && npm test
+$ npm install && npm test
 ```
 
 ### Author
@@ -561,13 +571,13 @@ $ npm install -d && npm test
 **Jon Schlinkert**
 
 * [github/jonschlinkert](https://github.com/jonschlinkert)
-* [twitter/jonschlinkert](http://twitter.com/jonschlinkert)
+* [twitter/jonschlinkert](https://twitter.com/jonschlinkert)
 
 ### License
 
-Copyright © 2016, [Jon Schlinkert](https://github.com/jonschlinkert).
-Released under the [MIT license](LICENSE).
+Copyright © 2017, [Jon Schlinkert](https://github.com/jonschlinkert).
+MIT
 
 ***
 
-_This file was generated by [verb-generate-readme](https://github.com/verbose/verb-generate-readme), v0.2.0, on October 29, 2016._
+_This file was generated by [verb-generate-readme](https://github.com/verbose/verb-generate-readme), v0.4.2, on January 30, 2017._
